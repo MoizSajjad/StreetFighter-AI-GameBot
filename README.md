@@ -1,94 +1,132 @@
-### Prequisites/Dependencies
+# StreetFighter-AI-GameBot
 
-* Operating System: Windows 7 or above (64-bit)
+## Introduction
 
-* The Python API is made in version 3.6.3 and tested only for this version but it should run on any version above 3. For running it in Python versions below 3, some slight changes are required. Probably you would be able to figure them out yourselves but you can always contact the event head for your problem resolution.
+This project implements an **AI-powered bot** that can autonomously play the classic **Street Fighter II Turbo** using Python and the **BizHawk emulator**.
+The bot collects gameplay data, trains a supervised machine learning model, and predicts in-game actions in real time.
 
-* Java API is made and tested in JDK 10 but it should also work with other versions.
+The aim of this project is to explore the use of **machine learning in real-time interactive environments** and demonstrate how AI can be applied to classic retro games.
 
-### Running the game and executing the API code
+---
 
-1. For running a single bot (your bot vs CPU), open the single-player folder. For running two of your bots at the same time both fighting each other, open the two-players folder.
-2. Run EmuHawk.exe.
-3. From File drop down, choose Open ROM. (Shortcut: Ctrl+O)
-4. From the same single-player folder, choose the Street Fighter II Turbo (U).smc file.
-5. From Tools drop down, open the Tool Box. (Shortcut: Shift+T)
-6. Once you have performed the above steps, leave the emulator window and tool box open and open the command prompt in the directory of the API and run the following commands:
+## Key Features
 
-    For Python API: `python controller.py 1`
+* Complete ML pipeline: **data collection → preprocessing → model training → deployment**.
+* Supports **Player 1** and **Player 2** through command-line arguments.
+* Allows **Bot vs CPU** and **Bot vs Bot** gameplay.
+* Records fight histories and logs states for future training and analysis.
+* Uses a **Multi-Layer Perceptron (MLP)** for predicting controller inputs.
+* Real-time communication with the BizHawk emulator using sockets.
 
-    For Java API: 
-    
-    `javac -cp lib\json-20160212.jar *.java` (For compiling)
-    
-    `java -cp 'lib\json-20160212.jar;.' Controller 1` (For executing)
-    
-    Note: The '1' at the end of each execution command is a command-line argument. '1' is for controlling player 1 through your bot (left hand side player in the game). '2' if you want to contol player 2 (right hand side player in the game). Any command-line arguments other than '1' or '2' (without the quotes) will cause the code to give an error. (Yes we haven't done exception handling. Deal with it.)
+---
 
-7. After executing the code, go and select your character(s) in the game after choosing normal mode. Controls for selecting players can be set or seen from the controllers option in the config drop down of the emulator.
-8. Now click on the second icon in the top row (Gyroscope Bot). This will cause the emulator to establish a connection with the program you ran and you will see "Connected to the game!" or "CONNECTED SUCCESSFULLY" on the terminal.
-9. If you have completed all of these steps successfully then you have successfully run the GameBot starter code.
-10. The program will stop once a single round is finished. Repeat this process for running the emulator and the code again.
+## Project Structure
 
-### API Details
+```
+StreetFighter-AI-GameBot/
+│
+├── bot1.py             # AI bot logic (loads model, predicts next action)
+├── controller1.py      # Communication with BizHawk emulator
+├── data/               # Logged gameplay data (CSV files)
+├── models/             # Trained model and scaler (.pkl files)
+├── utils/              # Helper classes: Buttons, Player, GameState
+└── README.md           # Project documentation
+```
 
-Both the API's contain similar code structure and files. Brief explanation of each file is explained as follows:
+### File Descriptions
 
-* Buttons: Contains the Button class which represents a simple SNES gamepad used for playing Street Fighter. Each gamepad contains twelve buttons. So does the Buttons class which contains 12 boolean members each representing a single button. The function of each button in the game of Street Fighter II can be seen in the below image:
+* **bot1.py**
+  Loads the trained model (`best_mlp_bot_model.pkl`) and scaler, processes the current game state, predicts the next move, and generates button commands.
+
+* **controller1.py**
+  Connects to the BizHawk emulator, retrieves game state, logs data, invokes the bot, and sends commands back to the emulator.
+
+* **Buttons / Player / GameState**
+  Define the SNES controller, player attributes, and complete game state structure.
+
+---
+
+## Installation
+
+1. Install **Python 3.6.3 or above**.
+2. Download and install the **BizHawk emulator** with its prerequisites.
+3. Clone this repository:
+
+   ```bash
+   git clone https://github.com/your-username/StreetFighter-AI-GameBot.git
+   cd StreetFighter-AI-GameBot
+   ```
+4. Install dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+---
+
+## Usage
+
+1. Launch BizHawk (`EmuHawk.exe`).
+
+2. Load the ROM: *Street Fighter II Turbo (U).smc*.
+
+3. In BizHawk, open **Tools → Tool Box**.
+
+4. Run the bot:
+
+   ```bash
+   python controller1.py 1
+   ```
+
+   * Use `1` for Player 1 (left side).
+   * Use `2` for Player 2 (right side).
+
+5. To run two bots simultaneously:
+
+   ```bash
+   python controller1.py 1
+   python controller1.py 2
+   ```
+
+---
+
+## Model Training
+
+* Data collected by logging game states and actions.
+* Features: player health, coordinates, crouch/jump states, current move, and round timer.
+* Trained **MLP model** with:
+
+  * Hidden Layer 1: 100 neurons
+  * Hidden Layer 2: 50 neurons
+* Achieved \~60% accuracy in action prediction.
+* Models and scalers are saved as `.pkl` files for runtime use.
+
+---
+
+## Results
+
+* The bot successfully connects with BizHawk and autonomously plays matches.
+* Consistent action prediction with \~60% accuracy.
+* Demonstrates how AI can be applied to retro games for automation and experimentation.
+
+---
+
+## Future Work
+
+* Collect larger and more diverse datasets.
+* Explore advanced models (CNNs, LSTMs, Transformers).
+* Perform hyperparameter optimization for higher accuracy.
+* Extend framework to other SNES games using the BizHawk API.
+
+---
+
+## Requirements
+
+* Windows 7 or above (64-bit)
+* Python 3.6.3 or newer
+* BizHawk emulator with prerequisites installed
+* Street Fighter II Turbo ROM
 
 
-* Player: Contains the Player class which represents a player. The data members of the Player class are explained as follows:
 
-    player_id (integer): The character id of the identifying the character the player has chosen. There are 12 characters present in the game.
-
-    health (integer): The remaining health value of the player.
-
-    x_coord (integer): The x-coordinate of the player.
-
-    y_coord (integer): The y-coordinate of the player.
-
-    is_jumping (boolean): Is the player jumping right now?
-
-    is_crouching (boolean): Is the player crouching right now?
-
-    player_buttons (Buttons Object): The buttons player pressed (set) in the current time instance.
-
-    in_move (boolean): Is the player currently performing a move now or is idle?
-
-    move_id (integer): What move is the player performing right now?
-
-
-* GameState: Contains the GameState class which represents all the information we are getting from the game in a single time instance. The data members are explained as follows:
-
-    player1 (Player object): Contains all the information about player-1 for the current time instance.
-
-    player2 (Player object): Contains all the information about player-2 for the current time instance.
-
-    timer (integer): The current time of the round. Each round is of 100 seconds.
-
-    fight_result: What was the result of the fight if the fight is over? Which player won?
-
-    has_round_started (boolean): Has the round started yet?
-
-    is_round_over (boolean): Has the round ended yet?
-
-
-* Command: Contains the Command class which represents the command which will be passed to the game by the bot for the next time instance. It contains Buttons objects for the respective player from which you are playing. A command to the game will only consist of the buttons you want the bot to press at the next time instance.
-
-
-* Controller: Contains the socket connection logic, communication logic and the main game loop.
-
-
-## What you have to do?
-
-You have to implement the fight function in the bot.py or Bot.java file. The fight function takes as input a GameState object representing the input from the game at the current time instance and a string indicating which player is playing through this program. You will have to use the information provided in the GameState object, set the buttons accordingly in the Command object and return that Command object from this function. A simple example is provided for your reference in the 'bot' file of both the APIs. In this example, the 'up' button is always being set to true which causes the bot to repeatedly jump in the game.
-
-
-
-
-#### We hope that a thorough reading of this document will be able to answer most of your questions. 
-
-
-#### To run two bots at the same time (Optional)
-
-To run two bots at the same time and to make them fight each other, you will have to run both your bots at the same time. One with the command-line argument '1' and the other with the command-line argument '2'. Also be sure to select two players in the game in the VS Battle mode.
+Would you like me to now also generate a **ready-to-use `requirements.txt`** with the exact packages (`numpy`, `pandas`, `scikit-learn`, etc.) so that anyone cloning your repo can install dependencies in one step?
