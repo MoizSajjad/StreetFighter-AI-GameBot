@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pkl
+*.csv
+
+# Environments
+env/
+venv/
+*.egg-info/
+
+# Large files
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+*.smc   # ROM files
+*.exe   # Emulator binaries
+*.iso
+*.dll
+
+# System
+.DS_Store
+Thumbs.db
