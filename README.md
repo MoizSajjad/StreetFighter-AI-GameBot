@@ -126,7 +126,3 @@ StreetFighter-AI-GameBot/
 * Python 3.6.3 or newer
 * BizHawk emulator with prerequisites installed
 * Street Fighter II Turbo ROM
-
-
-
-Would you like me to now also generate a **ready-to-use `requirements.txt`** with the exact packages (`numpy`, `pandas`, `scikit-learn`, etc.) so that anyone cloning your repo can install dependencies in one step?
